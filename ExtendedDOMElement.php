@@ -26,6 +26,12 @@ class ExtendedDOMElement extends \DOMElement
     public function doXPathQuery($expression, $context_node = null)
     {
         $xpath = new \DOMXPath($this->ownerDocument);
+
+        if(is_null($context_node))
+        {
+            $context_node = $this;
+        }
+
         return $xpath->query($expression, $context_node);
     }
 
