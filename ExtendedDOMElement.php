@@ -127,7 +127,7 @@ class ExtendedDOMElement extends \DOMElement
 
     public function getElementById($id)
     {
-        return $this->doXPathQuery(".//*[@id='" . $id . "']", $this)->item(0);
+        return $this->doXPathQuery("(.//*[@id='" . $id . "'])[1]", $this)->item(0);
     }
 
     public function getElementsByAttributeName($attribute_name)
