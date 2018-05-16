@@ -19,8 +19,6 @@ class ExtendedDOMDocument extends \DOMDocument
     }
 
     /**
-     * Register the ExtendedDOM classes to PHP DOM
-     *
      * This method will register ExtendedDOMDocument and/or ExtendedDOMElement as the classes for the DOM extension to
      * use.
      *
@@ -45,7 +43,7 @@ class ExtendedDOMDocument extends \DOMDocument
      *
      * @param string $expression The XPath query
      * @param DOMNode[optional] $context_node Optional context node to limit the query scope
-     * @return DOMNodeList Returns result of the query as a DOMNodeList object
+     * @return DOMNodeList Result of the query as a DOMNodeList object
      */
     public function doXPathQuery($expression, $context_node = null)
     {
@@ -69,7 +67,7 @@ class ExtendedDOMDocument extends \DOMDocument
      *
      * @param string $content TextNode content
      * @param string $escape_type Type of escaping to use
-     * @return DOMText Returns a DOMText object or false if error ocurred
+     * @return DOMText The new DOMText object or false if error ocurred
      */
     public function extCreateTextNode($content, $escape_type = 'html')
     {
@@ -83,7 +81,7 @@ class ExtendedDOMDocument extends \DOMDocument
      * @param string $name Tag name of the element
      * @param string[optional] $value The value of the element
      * @param string $escape_type Type of escaping to use
-     * @return DOMElement Returns a DOMElement object or false if error ocurred
+     * @return DOMElement The new DOMElement object or false if error ocurred
      */
     public function extCreateElement($name, $value = null, $escape_type = 'html')
     {
@@ -102,7 +100,7 @@ class ExtendedDOMDocument extends \DOMDocument
      * @param string $qualifiedName The qualified name of the element, as prefix:tagname
      * @param string[optional] $value The value of the element
      * @param string $escape_type Type of escaping to use
-     * @return DOMElement Returns a DOMElement object or false if error ocurred
+     * @return DOMElement The new DOMElement object or false if error ocurred
      */
     public function extCreateElementNS($namespaceURI, $qualifiedName, $value = null, $escape_type = 'html')
     {
@@ -120,7 +118,7 @@ class ExtendedDOMDocument extends \DOMDocument
      * @param string $name Name of the attribute
      * @param string $value Attribute value
      * @param string $escape_type Type of escaping to use
-     * @return DOMAttr Returns a completed DOMAttr object or false if error ocurred
+     * @return DOMAttr The new DOMAttr object or false if error ocurred
      */
     public function createFullAttribute($name, $value, $escape_type = 'attribute')
     {
@@ -137,7 +135,7 @@ class ExtendedDOMDocument extends \DOMDocument
      * @param string $qualifiedName The qualified name of the element, as prefix:tagname
      * @param string $value Attribute value
      * @param string $escape_type Type of escaping to use
-     * @return DOMAttr Returns a completed DOMAttr object or false if error ocurred
+     * @return DOMAttr The new DOMAttr object or false if error ocurred
      */
     public function createFullAttributeNS($namespaceURI, $qualifiedName, $value, $escape_type = 'attribute')
     {
@@ -152,7 +150,7 @@ class ExtendedDOMDocument extends \DOMDocument
      *
      * @param string $name Name of the attribute
      * @param DOMNode[optional] $context_node Optional context node to search within
-     * @return DOMNodeList Returns a DOMNodeList of matching elements
+     * @return DOMNodeList A DOMNodeList of matching elements
      */
     public function getElementsByAttributeName($name, $context_node = null)
     {
@@ -164,8 +162,8 @@ class ExtendedDOMDocument extends \DOMDocument
      *
      * @param string $name Name of the attribute
      * @param string $value Attribute value to match
-     * @param object|null $context_node Optional context node to search within
-     * @return DOMNodeList Returns a DOMNodeList of matching elements
+     * @param DOMNode[optional] $context_node Optional context node to search within
+     * @return DOMNodeList A DOMNodeList of matching elements
      */
     public function getElementsByAttributeValue($name, $value, $context_node = null)
     {
@@ -177,7 +175,7 @@ class ExtendedDOMDocument extends \DOMDocument
      *
      * @param string $name Name of the class
      * @param DOMNode[optional] $context_node Optional context node to search within
-     * @return DOMNodeList Returns a DOMNodeList of matching elements
+     * @return DOMNodeList A DOMNodeList of matching elements
      */
     public function getElementsByClassName($name, $context_node = null)
     {
@@ -228,7 +226,7 @@ class ExtendedDOMDocument extends \DOMDocument
      *
      * @param DOMNode $node Node to be copied
      * @param boolean $deep Deep copy
-     * @return ExtendedDOMDocument
+     * @return ExtendedDOMDocument The new ExtendedDOMDocument containing the copied node
      */
     public function copyNodeIntoDocument($node, $deep = false)
     {
