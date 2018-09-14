@@ -51,7 +51,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function doXPathQuery($expression, $context_node = null)
     {
-        return \phpDOMExtend\DOMFunctions::doXPathQuery($this, $expression, $context_node);
+        return DOMFunctions::doXPathQuery($this, $expression, $context_node);
     }
 
     /**
@@ -63,7 +63,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function extCreateTextNode($content, $escape_type = 'html')
     {
-        \phpDOMExtend\DOMEscaper::doEscaping($content, $escape_type);
+        DOMEscaper::doEscaping($content, $escape_type);
         return parent::createTextNode($content);
     }
 
@@ -79,7 +79,7 @@ class ExtendedDOMDocument extends DOMDocument
     {
         if (!is_null($value))
         {
-            \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+            DOMEscaper::doEscaping($value, $escape_type);
         }
 
         return parent::createElement($name, $value);
@@ -98,7 +98,7 @@ class ExtendedDOMDocument extends DOMDocument
     {
         if (!is_null($value))
         {
-            \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+            DOMEscaper::doEscaping($value, $escape_type);
         }
 
         return parent::createElementNS($namespaceURI, $qualifiedName, $value);
@@ -114,7 +114,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function createFullAttribute($name, $value, $escape_type = 'attribute')
     {
-        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+        DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->createAttribute($name);
         $attribute->value = $value;
         return $attribute;
@@ -131,7 +131,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function createFullAttributeNS($namespaceURI, $qualifiedName, $value, $escape_type = 'attribute')
     {
-        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+        DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->createAttributeNS($namespaceURI, $qualifiedName);
         $attribute->value = $value;
         return $attribute;
@@ -146,7 +146,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function getElementsByAttributeName($name, $context_node = null)
     {
-        return $this->doXPathQuery('.//*[@' . $name . ']', $context_node);
+        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . ']', $context_node);
     }
 
     /**
@@ -159,7 +159,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function getElementsByAttributeValue($name, $value, $context_node = null)
     {
-        return $this->doXPathQuery('.//*[@' . $name . '=\'' . $value . '\']', $context_node);
+        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']', $context_node);
     }
 
     /**
@@ -202,15 +202,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function getAssociativeNodeArray($name, $context_node = null)
     {
-        $array = array();
-        $node_list = $this->doXPathQuery(".//*[@" . $name . "]", $context_node);
-
-        foreach ($node_list as $node)
-        {
-            $array[$node->getAttribute($name)] = $node;
-        }
-
-        return $array;
+        return DOMFunctions::getAssociativeNodeArray($this, $name, $context_node);
     }
 
     /**
@@ -223,24 +215,7 @@ class ExtendedDOMDocument extends DOMDocument
 
     public function insertAfter($newnode, $refnode = null)
     {
-        if(is_null($refnode))
-        {
-            return $this->appendChild($newnode);
-        }
-
-        $parent = $refnode->parentNode;
-        $next = $refnode->nextSibling;
-
-        if(!is_null($next))
-        {
-            return $parent->insertBefore($newnode, $next);
-        }
-        else
-        {
-           return $parent->appendChild($newnode);
-        }
-
-        return $newnode;
+        return DOMFunctions::insertAfter($this, $newnode, $refnode);
     }
 
     /**
@@ -253,22 +228,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function copyNode($node, $target_node, $insert)
     {
-        $parent = $target_node->parentNode;
-
-        if ($insert === 'before')
-        {
-            return $parent->insertBefore($node->cloneNode(true), $target_node);
-        }
-        else if($insert === 'after')
-        {
-            return $this->insertAfter($node->cloneNode(true), $target_node);
-        }
-        else if($insert === 'append')
-        {
-            return $target_node->appendChild($node->cloneNode(true));
-        }
-
-        return $node;
+        return DOMFunctions::copyNode($node, $target_node, $insert);
     }
 
     /**

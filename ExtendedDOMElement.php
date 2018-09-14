@@ -24,7 +24,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function doXPathQuery($expression, $context_node = null)
     {
-        return \phpDOMExtend\DOMFunctions::doXPathQuery($this, $expression, $context_node);
+        return DOMFunctions::doXPathQuery($this, $expression, $context_node);
     }
 
     /**
@@ -37,7 +37,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function extSetAttribute($name, $value, $escape_type = 'attribute')
     {
-        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+        DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->ownerDocument->createAttribute($name);
         $attribute->value = $value;
         return $this->setAttributeNode($attribute);
@@ -53,7 +53,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function extSetAttributeNS($namespaceURI, $qualifiedName, $value, $escape_type = 'attribute')
     {
-        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+        DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->ownerDocument->createAttributeNS($namespaceURI, $qualifiedName);
         $attribute->value = $value;
         return $this->setAttributeNodeNS($attribute);
@@ -142,7 +142,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function setContent($value, $relative = 'replace', $escape_type = 'html')
     {
-        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
+        DOMEscaper::doEscaping($value, $escape_type);
         $existing_value = $this->nodeValue;
 
         if ($relative === 'after')
@@ -191,15 +191,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getAssociativeNodeArray($name, $context_node = null)
     {
-        $array = array();
-        $node_list = $this->doXPathQuery(".//*[@" . $name . "]", $context_node);
-
-        foreach($node_list as $node)
-        {
-            $array[$node->getAttribute($name)] = $node;
-        }
-
-        return $array;
+        return DOMFunctions::getAssociativeNodeArray($this, $name, $context_node);
     }
 
     /**
@@ -210,7 +202,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementById($id)
     {
-        return $this->doXPathQuery("(.//*[@id='" . $id . "'])[1]", $this)->item(0);
+        return DOMFunctions::doXPathQuery($this, "(.//*[@id='" . $id . "'])[1]", $this)->item(0);
     }
 
     /**
@@ -221,7 +213,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementsByAttributeName($name)
     {
-        return $this->doXPathQuery('.//*[@' . $name . ']', $this);
+        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . ']', $this);
     }
 
     /**
@@ -233,7 +225,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementsByAttributeValue($name, $value)
     {
-        return $this->doXPathQuery('.//*[@' . $name . '=\'' . $value . '\']', $this);
+        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']', $this);
     }
 
     /**
@@ -248,34 +240,20 @@ class ExtendedDOMElement extends DOMElement
     }
 
     /**
-     * Get the innder nodes of this element.
+     * Get the inner nodes of this element.
      *
      * @param boolean $as_list True to return nodes as a list or false to return a DOMDocument containing the nodes.
      * @return DOMNodeList|ExtendedDOMDocument
      */
-    public function getInnerNode($as_list = false)
+    public function getInnerNodes($as_list = false)
     {
-        $nodes = $this->childNodes;
-
-        if ($as_list)
-        {
-            return $nodes;
-        }
-
-        $inner_dom = new ExtendedDOMDocument();
-
-        foreach ($nodes as $node)
-        {
-            $inner_dom->appendChild($inner_dom->importNode($node, true));
-        }
-
-        return $inner_dom;
+        return DOMFunctions::getInnerNodes($this, $as_list);
     }
 
     /**
      * Delete this node.
      */
-    public function removeSelf()
+    public function remove()
     {
         $parent = $this->parentNode;
 
@@ -299,24 +277,7 @@ class ExtendedDOMElement extends DOMElement
 
     public function insertAfter($newnode, $refnode = null)
     {
-        if(is_null($refnode))
-        {
-            return $this->appendChild($newnode);
-        }
-
-        $parent = $refnode->parentNode;
-        $next = $refnode->nextSibling;
-
-        if(!is_null($next))
-        {
-            return $parent->insertBefore($newnode, $next);
-        }
-        else
-        {
-            return $parent->appendChild($newnode);
-        }
-
-        return $newnode;
+        return DOMFunctions::insertAfter($this, $newnode, $refnode);
     }
 
     /**
@@ -329,21 +290,6 @@ class ExtendedDOMElement extends DOMElement
      */
     public function copyNode($node, $target_node, $insert)
     {
-        $parent = $target_node->parentNode;
-
-        if ($insert === 'before')
-        {
-            return $parent->insertBefore($node->cloneNode(true), $target_node);
-        }
-        else if($insert === 'after')
-        {
-            return $this->insertAfter($node->cloneNode(true), $target_node);
-        }
-        else if($insert === 'append')
-        {
-            return $target_node->appendChild($node->cloneNode(true));
-        }
-
-        return $node;
+        return DOMFunctions::copyNode($node, $target_node, $insert);
     }
 }
