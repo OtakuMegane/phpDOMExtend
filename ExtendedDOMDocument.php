@@ -12,13 +12,9 @@ use DOMText;
 
 class ExtendedDOMDocument extends DOMDocument
 {
-    private $escaper_instance;
-
     function __construct($register = false)
     {
         parent::__construct();
-
-        $this->escaper_instance = new DOMEscaper();
 
         if ($register)
         {
@@ -47,7 +43,7 @@ class ExtendedDOMDocument extends DOMDocument
     }
 
     /**
-     * Execute an XPath query on the current document and return the result.
+     * Execute an XPath query on this document and return the result.
      *
      * @param string $expression The XPath query
      * @param DOMNode [optional] $context_node Optional context node to limit the query scope
@@ -55,19 +51,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function doXPathQuery($expression, $context_node = null)
     {
-        $xpath = new DOMXPath($this);
-        return $xpath->query($expression, $context_node);
-    }
-
-    /**
-     * Use the defined escaper to escape the passed content before output.
-     *
-     * @param string $content The content to escape
-     * @param string $escape_type Type of escaping to use
-     */
-    public function doEscaping(&$content, $escape_type)
-    {
-        $this->escaper_instance->doEscaping($content, $escape_type);
+        return \phpDOMExtend\DOMFunctions::doXPathQuery($this, $expression, $context_node);
     }
 
     /**
@@ -79,7 +63,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function extCreateTextNode($content, $escape_type = 'html')
     {
-        $this->doEscaping($content, $escape_type);
+        \phpDOMExtend\DOMEscaper::doEscaping($content, $escape_type);
         return parent::createTextNode($content);
     }
 
@@ -95,7 +79,7 @@ class ExtendedDOMDocument extends DOMDocument
     {
         if (!is_null($value))
         {
-            $this->doEscaping($value, $escape_type);
+            \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         }
 
         return parent::createElement($name, $value);
@@ -114,7 +98,7 @@ class ExtendedDOMDocument extends DOMDocument
     {
         if (!is_null($value))
         {
-            $this->doEscaping($value, $escape_type);
+            \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         }
 
         return parent::createElementNS($namespaceURI, $qualifiedName, $value);
@@ -130,7 +114,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function createFullAttribute($name, $value, $escape_type = 'attribute')
     {
-        $this->doEscaping($value, $escape_type);
+        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->createAttribute($name);
         $attribute->value = $value;
         return $attribute;
@@ -147,7 +131,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function createFullAttributeNS($namespaceURI, $qualifiedName, $value, $escape_type = 'attribute')
     {
-        $this->doEscaping($value, $escape_type);
+        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->createAttributeNS($namespaceURI, $qualifiedName);
         $attribute->value = $value;
         return $attribute;
@@ -195,17 +179,17 @@ class ExtendedDOMDocument extends DOMDocument
      *
      * @param DOMNode $node
      */
-    public function removeElementKeepChildren($node)
+    public function removeParentNode($node)
     {
-        $children = $element->getInnerNode(true);
-        $parent = $element->parentNode;
+        $children = $node->getInnerNode(true);
+        $parent = $node->parentNode;
 
         foreach ($children as $child_node)
         {
-            $parent->insertBefore($child_node->cloneNode(true), $element);
+            $parent->insertBefore($child_node->cloneNode(true), $node);
         }
 
-        $element->removeSelf();
+        $node->removeSelf();
     }
 
     /**

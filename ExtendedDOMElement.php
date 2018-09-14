@@ -10,27 +10,13 @@ use DOMXPath;
 
 class ExtendedDOMElement extends DOMElement
 {
-    private $escaper_instance;
-
     function __construct($register = false)
     {
         parent::__construct();
-        $this->escaper_instance = new DOMEscaper();
-    }
-
-    // Because PHP's DOM won't always call the subclass constructor
-    private function doEscaping(&$content, $escape_type)
-    {
-        if (!isset($this->escaper_instance))
-        {
-            $this->escaper_instance = new DOMEscaper();
-        }
-
-        return $this->escaper_instance->doEscaping($content, $escape_type);
     }
 
     /**
-     * Execute an XPath query on the current document and return the result.
+     * Execute an XPath query on the this node and return the result.
      *
      * @param string $expression The XPath query
      * @param DOMNode [optional] $context_node Optional context node to limit the query scope
@@ -38,14 +24,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function doXPathQuery($expression, $context_node = null)
     {
-        $xpath = new DOMXPath($this->ownerDocument);
-
-        if(is_null($context_node))
-        {
-            $context_node = $this;
-        }
-
-        return $xpath->query($expression, $context_node);
+        return \phpDOMExtend\DOMFunctions::doXPathQuery($this, $expression, $context_node);
     }
 
     /**
@@ -58,7 +37,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function extSetAttribute($name, $value, $escape_type = 'attribute')
     {
-        $this->doEscaping($value, $escape_type);
+        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->ownerDocument->createAttribute($name);
         $attribute->value = $value;
         return $this->setAttributeNode($attribute);
@@ -74,7 +53,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function extSetAttributeNS($namespaceURI, $qualifiedName, $value, $escape_type = 'attribute')
     {
-        $this->doEscaping($value, $escape_type);
+        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         $attribute = $this->ownerDocument->createAttributeNS($namespaceURI, $qualifiedName);
         $attribute->value = $value;
         return $this->setAttributeNodeNS($attribute);
@@ -163,7 +142,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function setContent($value, $relative = 'replace', $escape_type = 'html')
     {
-        $this->doEscaping($value, $escape_type);
+        \phpDOMExtend\DOMEscaper::doEscaping($value, $escape_type);
         $existing_value = $this->nodeValue;
 
         if ($relative === 'after')
