@@ -11,34 +11,10 @@ use DOMText;
 
 class ExtendedDOMDocument extends DOMDocument
 {
-    function __construct($register = false)
+    function __construct()
     {
         parent::__construct();
-
-        if ($register)
-        {
-            $this->registerNodeClasses();
-        }
-    }
-
-    /**
-     * This method will register ExtendedDOMDocument and/or ExtendedDOMElement as the classes for the DOM extension to
-     * use.
-     *
-     * @param boolean $dom_document Register ExtendedDOMDocument
-     * @param boolean $dom_element Register ExtendedDOMElement
-     */
-    public function registerNodeClasses($dom_document = true, $dom_element = true)
-    {
-        if ($dom_document)
-        {
-            $this->registerNodeClass('DOMDocument', 'phpDOMExtend\ExtendedDOMDocument');
-        }
-
-        if ($dom_element)
-        {
-            $this->registerNodeClass('DOMElement', 'phpDOMExtend\ExtendedDOMElement');
-        }
+        $this->registerNodeClass('DOMElement', 'phpDOMExtend\ExtendedDOMElement');
     }
 
     /**

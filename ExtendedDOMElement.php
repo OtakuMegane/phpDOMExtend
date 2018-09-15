@@ -9,7 +9,7 @@ use DOMAttr;
 
 class ExtendedDOMElement extends DOMElement
 {
-    function __construct($register = false)
+    function __construct()
     {
         parent::__construct();
     }
