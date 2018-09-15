@@ -140,7 +140,7 @@ class ExtendedDOMElement extends DOMElement
      * @param string $escape_type Type of escaping to use
      * @return string The old node value
      */
-    public function setContent($value, $relative = 'replace', $escape_type = 'html')
+    public function addContent($value, $relative = 'after', $escape_type = 'html')
     {
         DOMEscaper::doEscaping($value, $escape_type);
         $existing_value = $this->nodeValue;
@@ -154,6 +154,22 @@ class ExtendedDOMElement extends DOMElement
             $value = $value . $existing_value;
         }
 
+        $this->nodeValue = $value;
+        return $existing_value;
+    }
+
+    /**
+     * Sets the current node value.
+     *
+     * @param string $value Node value
+     * @param string $relative How to modify the existing value
+     * @param string $escape_type Type of escaping to use
+     * @return string The old node value
+     */
+    public function setContent($value, $escape_type = 'html')
+    {
+        DOMEscaper::doEscaping($value, $escape_type);
+        $existing_value = $this->nodeValue;
         $this->nodeValue = $value;
         return $existing_value;
     }
