@@ -50,7 +50,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function doXPathQuery($expression, $context_node = null)
     {
-        return DOMFunctions::doXPathQuery($this, $expression, $context_node);
+        return DOMHelperFunctions::doXPathQuery($this, $expression, $context_node);
     }
 
     /**
@@ -143,9 +143,16 @@ class ExtendedDOMDocument extends DOMDocument
      * @param DOMNode [optional] $context_node Optional context node to search within
      * @return DOMNodeList A DOMNodeList of matching elements
      */
-    public function getElementsByAttributeName($name, $context_node = null)
+    public function getElementsByAttributeName($name, $as_array = false)
     {
-        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . ']', $context_node);
+        $query_result = DOMHelperFunctions::doXPathQuery($this, './/*[@' . $name . ']');
+
+        if($as_array)
+        {
+            return DOMHelperFunctions::attributeListToArray($query_result, $name);
+        }
+
+        return $query_result;
     }
 
     /**
@@ -158,7 +165,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function getElementsByAttributeValue($name, $value, $context_node = null)
     {
-        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']', $context_node);
+        return DOMHelperFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']', $context_node);
     }
 
     /**
@@ -170,7 +177,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function getElementsByClassName($name, $context_node = null)
     {
-        return DOMFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']', $this);
+        return DOMHelperFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']', $this);
     }
 
     /**
@@ -201,7 +208,24 @@ class ExtendedDOMDocument extends DOMDocument
 
     public function insertAfter($newnode, $refnode = null)
     {
-        return DOMFunctions::insertAfter($this, $newnode, $refnode);
+        if(is_null($refnode))
+        {
+            return $this->appendChild($newnode);
+        }
+
+        $parent = $refnode->parentNode;
+        $next = $refnode->nextSibling;
+
+        if(!is_null($next))
+        {
+            return $parent->insertBefore($newnode, $next);
+        }
+        else
+        {
+            return $parent->appendChild($newnode);
+        }
+
+        return $newnode;
     }
 
     /**

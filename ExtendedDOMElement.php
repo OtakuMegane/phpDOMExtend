@@ -23,7 +23,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function doXPathQuery($expression, $context_node = null)
     {
-        return DOMFunctions::doXPathQuery($this, $expression, $context_node);
+        return DOMHelperFunctions::doXPathQuery($this, $expression, $context_node);
     }
 
     /**
@@ -44,6 +44,7 @@ class ExtendedDOMElement extends DOMElement
 
     /**
      * Extended setAttributeNS that adds escaping to the value.
+     *
      * @param string $namespaceURI The URI of the namespace
      * @param string $qualifiedName The qualified name of the element
      * @param string $value Attribute value
@@ -188,7 +189,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementById($id)
     {
-        return DOMFunctions::doXPathQuery($this, "(.//*[@id='" . $id . "'])[1]", $this)->item(0);
+        return DOMHelperFunctions::doXPathQuery($this, "(.//*[@id='" . $id . "'])[1]", $this)->item(0);
     }
 
     /**
@@ -200,11 +201,11 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementsByAttributeName($name, $as_array = false)
     {
-        $query_result = DOMFunctions::doXPathQuery($this, './/*[@' . $name . ']');
+        $query_result = DOMHelperFunctions::doXPathQuery($this, './/*[@' . $name . ']');
 
         if($as_array)
         {
-            return DOMFunctions::attributeListToArray($query_result, $name);
+            return DOMHelperFunctions::attributeListToArray($query_result, $name);
         }
 
         return $query_result;
@@ -219,7 +220,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementsByAttributeValue($name, $value)
     {
-        $query_result =  DOMFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']');
+        $query_result =  DOMHelperFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']');
         return $query_result;
     }
 
@@ -231,7 +232,7 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementsByClassName($name, $as_array = false)
     {
-        $query_result = DOMFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']');
+        $query_result = DOMHelperFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']');
         return $query_result;
     }
 
@@ -243,7 +244,21 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getInnerNodes($as_list = false)
     {
-        return DOMFunctions::getInnerNodes($this, $as_list);
+        $nodes = $this->childNodes;
+
+        if ($as_list)
+        {
+            return $nodes;
+        }
+
+        $inner_dom = new ExtendedDOMDocument();
+
+        foreach ($nodes as $node)
+        {
+            $inner_dom->appendChild($inner_dom->importNode($node, true));
+        }
+
+        return $inner_dom;
     }
 
     /**
@@ -273,6 +288,23 @@ class ExtendedDOMElement extends DOMElement
 
     public function insertAfter($newnode, $refnode = null)
     {
-        return DOMFunctions::insertAfter($this, $newnode, $refnode);
+        if(is_null($refnode))
+        {
+            return $this->appendChild($newnode);
+        }
+
+        $parent = $refnode->parentNode;
+        $next = $refnode->nextSibling;
+
+        if(!is_null($next))
+        {
+            return $parent->insertBefore($newnode, $next);
+        }
+        else
+        {
+            return $parent->appendChild($newnode);
+        }
+
+        return $newnode;
     }
 }
