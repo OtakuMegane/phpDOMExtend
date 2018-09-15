@@ -11,7 +11,7 @@ class DOMFunctions
         ;
     }
 
-    public static function doXPathQuery($node, $expression, $context_node = null)
+    public static function doXPathQuery($node, $expression, $context_node = null, $array = false)
     {
         $node_parent = $node->ownerDocument;
 
@@ -73,34 +73,13 @@ class DOMFunctions
         return $inner_dom;
     }
 
-    public static function copyNode($node, $target_node, $insert)
-    {
-        $parent = $target_node->parentNode;
-
-        if ($insert === 'before')
-        {
-            return $parent->insertBefore($node->cloneNode(true), $target_node);
-        }
-        else if($insert === 'after')
-        {
-            return self::insertAfter($node->cloneNode(true), $target_node);
-        }
-        else if($insert === 'append')
-        {
-            return $target_node->appendChild($node->cloneNode(true));
-        }
-
-        return $node;
-    }
-
-    public static function getAssociativeNodeArray($node, $name, $context_node = null)
+    public static function attributeListToArray($node_list, $attribute_name)
     {
         $array = array();
-        $node_list = self::doXPathQuery($node, ".//*[@" . $name . "]", $context_node);
 
         foreach ($node_list as $node)
         {
-            $array[$node->getAttribute($name)] = $node;
+            $array[$node->getAttribute($attribute_name)] = $node;
         }
 
         return $array;

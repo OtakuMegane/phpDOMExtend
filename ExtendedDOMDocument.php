@@ -7,7 +7,6 @@ use DOMElement;
 use DOMNode;
 use DOMNodeList;
 use DOMAttr;
-use DOMXPath;
 use DOMText;
 
 class ExtendedDOMDocument extends DOMDocument
@@ -171,7 +170,7 @@ class ExtendedDOMDocument extends DOMDocument
      */
     public function getElementsByClassName($name, $context_node = null)
     {
-        return $this->getElementsByAttributeValue('class', $name, $context_node);
+        return DOMFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']', $this);
     }
 
     /**
@@ -193,24 +192,11 @@ class ExtendedDOMDocument extends DOMDocument
     }
 
     /**
-     * Searches for nodes containing the given attribute and returns the nodes as a PHP associative array indexed
-     * by attribute values.
-     *
-     * @param string $name Name of attribute to search for.
-     * @param DOMNode [optional] $context_node Optional context node to search within.
-     * @return array Associative array of nodes.
-     */
-    public function getAssociativeNodeArray($name, $context_node = null)
-    {
-        return DOMFunctions::getAssociativeNodeArray($this, $name, $context_node);
-    }
-
-    /**
      * Adds a new child after a reference node
      *
-     * @param DOMNode $newnode The new node.
-     * @param DOMNode $refnode The reference node. If not supplied, newnode is appended to the children.
-     * @return DOMNode The inserted node.
+     * @param DOMNode $newnode The new node
+     * @param DOMNode $refnode The reference node. If not supplied, newnode is appended to the children
+     * @return DOMNode The inserted node
      */
 
     public function insertAfter($newnode, $refnode = null)
@@ -221,14 +207,29 @@ class ExtendedDOMDocument extends DOMDocument
     /**
      * Copies a node and inserts it relative to a target node
      *
-     * @param DOMNode $node The node to be copied.
-     * @param DOMNode $target_node The target node to insert the new copy.
-     * @param string $insert Where to insert the copied node relative to the target.
-     * @return DOMNode The copied node.
+     * @param DOMNode $node The node to be copied
+     * @param DOMNode $target_node The target node to insert the new copy
+     * @param string $insert Where to insert the copied node relative to the target
+     * @return DOMNode The copied node
      */
     public function copyNode($node, $target_node, $insert)
     {
-        return DOMFunctions::copyNode($node, $target_node, $insert);
+        $parent = $target_node->parentNode;
+
+        if ($insert === 'before')
+        {
+            return $parent->insertBefore($node->cloneNode(true), $target_node);
+        }
+        else if($insert === 'after')
+        {
+            return self::insertAfter($node->cloneNode(true), $target_node);
+        }
+        else if($insert === 'append')
+        {
+            return $target_node->appendChild($node->cloneNode(true));
+        }
+
+        return $node;
     }
 
     /**

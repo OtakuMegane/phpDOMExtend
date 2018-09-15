@@ -6,7 +6,6 @@ use DOMElement;
 use DOMNode;
 use DOMNodeList;
 use DOMAttr;
-use DOMXPath;
 
 class ExtendedDOMElement extends DOMElement
 {
@@ -182,19 +181,6 @@ class ExtendedDOMElement extends DOMElement
     }
 
     /**
-     * Searches for nodes containing the given attribute and returns the nodes as a PHP associative array indexed
-     * by attribute values.
-     *
-     * @param string $name Name of attribute to search for
-     * @param DOMNode [optional] $context_node Optional context node to search within
-     * @return array Associative array of nodes
-     */
-    public function getAssociativeNodeArray($name, $context_node = null)
-    {
-        return DOMFunctions::getAssociativeNodeArray($this, $name, $context_node);
-    }
-
-    /**
      * Get child element matching the given ID.
      *
      * @param string $id The ID to search for
@@ -209,11 +195,19 @@ class ExtendedDOMElement extends DOMElement
      * Get child elements which contain the given attribute name.
      *
      * @param string $name Name of the attribute
+     * @param boolean $as_array If true, function will return an associative array keyed by attribute value
      * @return DOMNodeList A DOMNodeList of matching elements
      */
-    public function getElementsByAttributeName($name)
+    public function getElementsByAttributeName($name, $as_array = false)
     {
-        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . ']', $this);
+        $query_result = DOMFunctions::doXPathQuery($this, './/*[@' . $name . ']');
+
+        if($as_array)
+        {
+            return DOMFunctions::attributeListToArray($query_result, $name);
+        }
+
+        return $query_result;
     }
 
     /**
@@ -225,7 +219,8 @@ class ExtendedDOMElement extends DOMElement
      */
     public function getElementsByAttributeValue($name, $value)
     {
-        return DOMFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']', $this);
+        $query_result =  DOMFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']');
+        return $query_result;
     }
 
     /**
@@ -234,15 +229,16 @@ class ExtendedDOMElement extends DOMElement
      * @param string $name Name of the class
      * @return DOMNodeList A DOMNodeList of matching elements
      */
-    public function getElementsByClassName($name)
+    public function getElementsByClassName($name, $as_array = false)
     {
-        return $this->getElementsByAttributeValue('class', $name);
+        $query_result = DOMFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']');
+        return $query_result;
     }
 
     /**
      * Get the inner nodes of this element.
      *
-     * @param boolean $as_list True to return nodes as a list or false to return a DOMDocument containing the nodes.
+     * @param boolean $as_list True to return nodes as a list or false to return a DOMDocument containing the nodes
      * @return DOMNodeList|ExtendedDOMDocument
      */
     public function getInnerNodes($as_list = false)
@@ -270,7 +266,7 @@ class ExtendedDOMElement extends DOMElement
     /**
      * Adds a new child after a reference node
      *
-     * @param DOMNode $newnode The new node.
+     * @param DOMNode $newnode The new node
      * @param DOMNode $refnode The reference node. If not supplied, newnode is appended to the children.
      * @return DOMNode The inserted node.
      */
@@ -278,18 +274,5 @@ class ExtendedDOMElement extends DOMElement
     public function insertAfter($newnode, $refnode = null)
     {
         return DOMFunctions::insertAfter($this, $newnode, $refnode);
-    }
-
-    /**
-     * Copies a node and inserts it relative to a target node
-     *
-     * @param DOMNode $node The node to be copied.
-     * @param DOMNode $target_node The target node to insert the new copy.
-     * @param string $insert Where to insert the copied node relative to the target.
-     * @return DOMNode The copied node.
-     */
-    public function copyNode($node, $target_node, $insert)
-    {
-        return DOMFunctions::copyNode($node, $target_node, $insert);
     }
 }
