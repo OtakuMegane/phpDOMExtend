@@ -139,9 +139,9 @@ class ExtendedDOMDocument extends DOMDocument
      * @param DOMNode [optional] $context_node Optional context node to search within
      * @return DOMNodeList A DOMNodeList of matching elements
      */
-    public function getElementsByAttributeValue($name, $value, $context_node = null)
+    public function getElementsByAttributeValue($name, $value)
     {
-        return DOMHelperFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']', $context_node);
+        return DOMHelperFunctions::doXPathQuery($this, './/*[@' . $name . '=\'' . $value . '\']');
     }
 
     /**
@@ -151,9 +151,9 @@ class ExtendedDOMDocument extends DOMDocument
      * @param DOMNode [optional] $context_node Optional context node to search within
      * @return DOMNodeList A DOMNodeList of matching elements
      */
-    public function getElementsByClassName($name, $context_node = null)
+    public function getElementsByClassName($name)
     {
-        return DOMHelperFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']', $this);
+        return DOMHelperFunctions::doXPathQuery($this, './/*[@class=\'' . $name . '\']');
     }
 
     /**
