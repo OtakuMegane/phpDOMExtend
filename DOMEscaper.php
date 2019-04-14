@@ -26,6 +26,7 @@ class DOMEscaper
                 $content = htmlspecialchars($content, ENT_QUOTES, 'UTF-8', FALSE);
                 break;
 
+            case 'attr':
             case 'attribute':
                 $content = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su',
                         function ($matches)
