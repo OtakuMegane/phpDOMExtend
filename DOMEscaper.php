@@ -28,7 +28,7 @@ class DOMEscaper
 
             case 'attr':
             case 'attribute':
-                $content = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su',
+                $content = preg_replace_callback('#[^a-zA-Z0-9,\.\-_]#Su',
                         function ($matches)
                         {
                             switch ($matches[0])
@@ -77,7 +77,7 @@ class DOMEscaper
                         }, $content);
                 break;
             case 'css':
-                $content = preg_replace_callback('#[^a-zA-Z0-9,\._]#Su',
+                $content = preg_replace_callback('#[^a-zA-Z0-9]#Su',
                         function ($matches)
                         {
                             if (strlen($matches[0]) === 1)
